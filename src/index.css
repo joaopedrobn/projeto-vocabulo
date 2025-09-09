@@ -1,0 +1,237 @@
+/* ============================
+   TEMA / VARIÁVEIS GLOBAIS
+   ============================ */
+:root {
+  --cor-fundo: #3C3636;
+  --cor-texto: #FFFFFF;
+  --cor-borda: #565252;
+  --cor-correta: #538d4e;
+  --cor-presente: #b59f3b;
+  --cor-ausente: #3a3a3c;
+  --cor-tecla: #817979;
+
+  /* Largura do app e respiro lateral */
+  --largura-app: 1160px;
+  --gutter: 16px;
+
+  /* === CONTROLES DO TECLADO (DESKTOP) === */
+  --kbd-width-scale: 0.92;     /* 0.92 = ~8% mais “fechado” nas laterais */
+  --kbd-height: 72px;          /* antes 80px */
+  --kbd-gap: 6px;              /* antes 8px */
+  --kbd-font: 1.35rem;         /* antes 1.45rem */
+  --kbd-font-special: 0.95rem; /* antes 1.0rem */
+  --kbd-special-grow: 1.35;    /* antes 1.5 (Enter/Backspace menos largos) */
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  touch-action: manipulation;
+}
+
+/* ============================
+   ANIMAÇÕES
+   ============================ */
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+@keyframes flip {
+  0%   { transform: rotateX(0);  background-color: var(--cor-fundo); border-color: var(--cor-borda); }
+  49%  {                          background-color: var(--cor-fundo); border-color: var(--cor-borda); }
+  50%  { transform: rotateX(90deg); }
+  100% { transform: rotateX(0); }
+}
+
+/* ============================
+   LAYOUT PRINCIPAL
+   ============================ */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  max-width: var(--largura-app);
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+header {
+  position: relative;
+  text-align: center;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+/* Mensagem de Feedback */
+.mensagem {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #121213;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* ============================
+   GRID DAS LETRAS
+   ============================ */
+.grid-container {
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  gap: 8px;
+}
+.grid-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.row-shake { animation: shake 0.6s ease-in-out; }
+
+.grid-row.submitted .tile {
+  animation-name: flip;
+  animation-duration: 0.6s;
+  animation-timing-function: ease-in-out;
+}
+.grid-row.submitted .tile:nth-child(1) { animation-delay: 0.1s; }
+.grid-row.submitted .tile:nth-child(2) { animation-delay: 0.2s; }
+.grid-row.submitted .tile:nth-child(3) { animation-delay: 0.3s; }
+.grid-row.submitted .tile:nth-child(4) { animation-delay: 0.4s; }
+.grid-row.submitted .tile:nth-child(5) { animation-delay: 0.5s; }
+
+/* Tile (quadradinho) — mais largo, mesma altura */
+.tile {
+  width: 78px;      /* +largura */
+  height: 70px;     /* mesma altura */
+  border: none;
+  background-color: var(--cor-borda);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-sizing: border-box;
+}
+.tile-status-digitando { background-color: var(--cor-fundo); border: 2px solid var(--cor-borda); }
+.tile-status-correta   { background-color: var(--cor-correta); }
+.tile-status-presente  { background-color: var(--cor-presente); }
+.tile-status-ausente   { background-color: var(--cor-ausente); }
+
+/* ============================
+   TECLADO — LARGO, PORÉM MAIS ENXUTO
+   ============================ */
+.teclado-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kbd-gap);
+
+  /* Ocupa a largura do viewport com respiro lateral */
+  width: min(var(--largura-app), calc(100vw - (2 * var(--gutter))));
+  margin-inline: auto;
+
+  /* “Apertar” horizontalmente sem usar transform:
+     cria padding lateral proporcional, reduzindo a área útil */
+  padding-inline: calc((1 - var(--kbd-width-scale)) * 50%);
+}
+
+.teclado-linha {
+  display: flex;
+  width: 100%;
+  gap: var(--kbd-gap);
+  justify-content: space-between;
+}
+
+/* Offset leve na 2ª fileira (aparência de teclado físico) */
+.teclado-linha.offset::before,
+.teclado-linha.offset::after {
+  content: '';
+  flex: 0.35; /* ~ meia tecla */
+}
+
+.teclado-botao {
+  font-family: inherit;
+  font-weight: 700;
+  border: 0;
+  padding: 0;
+  height: var(--kbd-height);
+  border-radius: 8px;
+  background-color: var(--cor-tecla);
+  color: var(--cor-texto);
+  text-transform: uppercase;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  flex: 1 1 0;     /* todas crescem por igual */
+  min-width: 0;
+  font-size: var(--kbd-font);
+}
+
+/* ENTER e Backspace um pouco mais estreitos que antes */
+.teclado-botao.special {
+  flex-grow: var(--kbd-special-grow);
+  font-size: var(--kbd-font-special);
+}
+
+/* Estados */
+.teclado-botao.status-padrao  { background-color: var(--cor-tecla); }
+.teclado-botao.status-correta { background-color: var(--cor-correta); }
+.teclado-botao.status-presente{ background-color: var(--cor-presente); }
+.teclado-botao.status-ausente { background-color: var(--cor-ausente); }
+
+/* ============================
+   RESPONSIVO
+   ============================ */
+@media (max-width: 520px) {
+  :root{
+    --kbd-width-scale: 1;       /* no mobile continua cheio */
+    --kbd-height: 60px;         /* antes 64px */
+    --kbd-gap: 6px;
+    --kbd-font: 1.15rem;
+    --kbd-font-special: 0.90rem;
+    --kbd-special-grow: 1.35;
+  }
+}
